@@ -1,5 +1,6 @@
 import streamlit as st
 from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -8,14 +9,15 @@ import time
 
 # Function to scrape the webpage
 def scrape_website(url):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run without UI
-    chrome_options.add_argument("--no-sandbox")  # Required for Streamlit Cloud
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Prevent resource issues
-    
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    options = uc.ChromeOptions()
+    options.headless = True  # Required for Streamlit Cloud
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--remote-debugging-port=9222")  # Debugging support
 
+    # Start Chrome
+    driver = uc.Chrome(options=options)
     try:
         driver.get(url)
         time.sleep(5)  # Allow time for page to load
